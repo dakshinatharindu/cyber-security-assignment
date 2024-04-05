@@ -40,6 +40,7 @@ def pad(data: bytes, block_size: int) -> bytes:
     Outpur:
     The padded string (Phrase).
     """
+    # TODO: Implement https://stackoverflow.com/a/13572751/21422372
 
     padding_len = block_size - len(data) % block_size
     padding = b'0'*padding_len
