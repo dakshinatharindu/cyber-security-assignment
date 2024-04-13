@@ -42,8 +42,12 @@ def pad(data: bytes, block_size: int) -> bytes:
     """
     # TODO: Implement https://stackoverflow.com/a/13572751/21422372
 
+    # PKCS#7 padding is used to pad the data to the block size.
     padding_len = block_size - len(data) % block_size
-    padding = b'0'*padding_len
+    if padding_len == 0:
+        padding_len = block_size
+
+    padding = bytes([padding_len] * padding_len)
     return data + padding
 
 
