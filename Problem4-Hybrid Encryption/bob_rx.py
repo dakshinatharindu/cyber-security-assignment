@@ -5,27 +5,32 @@ from cryptography.fernet import Fernet
 from base64 import b64encode, b64decode
 import socket
 
+
 def get_payload(input_string):
-    # Output : should be a dictionary as following 
+    # Output : should be a dictionary as following
     # payload = {'key': contains encrypted key, 'data': contains encrypted data}
-    return
+
+    # Split the input string into key and data
+    key, data = input_string.split("|")
+
+    return {'key': key, 'data': data}
 
 
 def receive_data(private_key_path):
     # get the hostname
-    host = .gethostname()
+    host = socket.gethostname()
     # initiate port no above 1024
-    port = 5000  
+    port = 5000
 
     # get instance
-    server_socket = socket.socket()  
+    server_socket = socket.socket()
     # look closely. The bind() function takes tuple as argument. bind host address and port together
-    server_socket.bind((host, port)) 
+    server_socket.bind((host, port))
 
     # configure how many clients the server can listen simultaneously
     server_socket.listen(2)
     # accept new connection
-    conn, address =
+    conn, address = server_socket.accept()
     print("Connection from: " + str(address))
 
     while True:
@@ -35,35 +40,33 @@ def receive_data(private_key_path):
             # if data is not received break
             break
         payload = get_payload(str(data))
-        #initiate hybrid decryption
-        decr_ans = 
+        # initiate hybrid decryption
+        decr_ans = hybrid_dec(payload, private_key_path)
         print("Received message: " + str(decr_ans))
 
     conn.close()  # close the connection
 
 
-def hybrid_dec(payload,private_key_path):
+def hybrid_dec(payload, private_key_path):
     # Read the private key
-    with open("private.pem", 'rb') as key_file:
+    with open(private_key_path, 'rb') as key_file:
         private_key = RSA.import_key(key_file.read())
 
     # Decode the symmetric key from base64
-    enc_symmetric_key  = b64decode(payload['key'])
+    enc_symmetric_key = b64decode(payload['key'])
 
     # Decode the data from base64
-    enc_data  = b64decode(payload['data'])
+    enc_data = b64decode(payload['data'])
 
     # Decrypt the key with RSA and get the symmetric key
-    cipher_rsa = .new()
-    symmetric_key = cipher_rsa.decrypt( )
+    cipher_rsa = PKCS1_OAEP.new(private_key)
+    symmetric_key = cipher_rsa.decrypt(enc_symmetric_key)
 
     # Decrypt the data
-    fernet = 
-    data = fernet.
+    fernet = Fernet(symmetric_key)
+    data = fernet.decrypt(enc_data).decode("utf-8")
 
     return data
-
-
 
 
 if __name__ == "__main__":
@@ -71,7 +74,6 @@ if __name__ == "__main__":
     # Use .strip() function to remove any whitespaces from the begining and/or end of input value
     private_key_path = input("Enter the path to the Private key file (.pem): ").strip()
 
-    
     # Check for the existence of both files
     if not os.path.isfile(private_key_path):
         print("Error: Private key file not found.")
