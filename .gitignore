@@ -1,3 +1,6 @@
 .idea
 /Problem3-Encryption with Certificates/input.txt
 *.pem
+Problem3-Encryption with Certificates/cipher.txt
+Problem3-Encryption with Certificates/output.txt
+Problem3-Encryption with Certificates/sample_long.txt
