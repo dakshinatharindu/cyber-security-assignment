@@ -11,6 +11,7 @@ def get_payload(input_string):
     # payload = {'key': contains encrypted key, 'data': contains encrypted data}
 
     # Split the input string into key and data
+    # Since there is not "|" in the Base64 encoded data, we can use it as a separator
     key, data = input_string.split("|")
 
     return {'key': key, 'data': data}
