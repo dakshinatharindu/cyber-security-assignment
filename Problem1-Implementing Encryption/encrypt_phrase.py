@@ -40,7 +40,6 @@ def pad(data: bytes, block_size: int) -> bytes:
     Outpur:
     The padded string (Phrase).
     """
-    # TODO: Implement https://stackoverflow.com/a/13572751/21422372
 
     # PKCS#7 padding is used to pad the data to the block size.
     padding_len = block_size - len(data) % block_size
